@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const sql = postgres(Deno.env.get("SUPABASE_DB_URL")!, { max: 1, prepare: false });
+  const sql = postgres(Deno.env.get("DB_URL")!, { max: 1, prepare: false });
 
   try {
     const authHeader = req.headers.get("Authorization");
