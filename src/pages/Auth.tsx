@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function Auth() {
@@ -47,15 +46,18 @@ export default function Auth() {
     setSubmitting(true);
     setError(null);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-        extraParams: {
-          hd: "jameasaifiyah.edu",
-          prompt: "select_account",
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: {
+            hd: "jameasaifiyah.edu",
+            prompt: "select_account",
+          },
         },
       });
-      if (result.error) {
-        setError(result.error.message);
+      if (error) {
+        setError(error.message);
       }
     } catch (err: any) {
       setError(err.message);
