@@ -43,26 +43,26 @@ export default function SportAssessment() {
   });
 
   const { data: proficiencies } = useQuery({
-    queryKey: ["my-proficiencies", profile?.id],
+    queryKey: ["my-proficiencies", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("student_sport_proficiencies")
         .select("*, sports(name)")
-        .eq("student_id", profile!.id);
+        .eq("student_tr", profile!.tr_number);
       if (error) throw error;
       return data;
     },
   });
 
   const { data: assessments } = useQuery({
-    queryKey: ["my-assessments", profile?.id],
+    queryKey: ["my-assessments", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sport_self_assessments")
         .select("*")
-        .eq("student_id", profile!.id);
+        .eq("student_tr", profile!.tr_number);
       if (error) throw error;
       return data;
     },
@@ -77,13 +77,13 @@ export default function SportAssessment() {
         .from("sport_self_assessments")
         .upsert(
           [{
-            student_id: profile.id,
+            student_tr: profile.tr_number,
             sport_id: selectedSport.id,
             experience_level: assessForm.experience_level,
             skill_rating: assessForm.skill_rating,
             years_of_practice: assessForm.years_of_practice,
           }],
-          { onConflict: "student_id,sport_id" }
+          { onConflict: "student_tr,sport_id" }
         );
       if (assessError) throw assessError;
 
@@ -94,12 +94,12 @@ export default function SportAssessment() {
         .from("student_sport_proficiencies")
         .upsert(
           [{
-            student_id: profile.id,
+            student_tr: profile.tr_number,
             sport_id: selectedSport.id,
             level: computedLevel,
             source: "self",
           }],
-          { onConflict: "student_id,sport_id" }
+          { onConflict: "student_tr,sport_id" }
         );
       if (profError) throw profError;
     },

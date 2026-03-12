@@ -43,13 +43,13 @@ export function useCertifications(year?: number) {
 export function useMyCertifications() {
   const { data: profile } = useProfile();
   return useQuery({
-    queryKey: ["my-certifications", profile?.id],
-    enabled: !!profile?.id,
+    queryKey: ["my-certifications", profile?.tr_number],
+    enabled: !!profile?.tr_number,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("certifications")
         .select("*, sports:sport_id(name, sport_type)")
-        .eq("student_id", profile!.id)
+        .eq("student_id", profile!.tr_number)
         .eq("status", "issued")
         .order("valid_year", { ascending: false });
       if (error) throw error;
@@ -92,7 +92,7 @@ export function useIssueCertificate() {
         score_snapshot: score,
         proficiency_level: level as any,
         certificate_number: certNum,
-        issued_by: profile?.id,
+        issued_by: profile?.tr_number,
         valid_year: year,
         notes: notes || null,
         status: "issued" as any,

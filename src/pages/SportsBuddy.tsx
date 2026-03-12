@@ -35,7 +35,7 @@ function MatchCard({ match }: { match: any }) {
   const completeMut = useCompleteMatchRequest();
   const [showPlayers, setShowPlayers] = useState(false);
 
-  const isCreator = profile?.id === match.created_by;
+  const isCreator = profile?.tr_number === match.created_by;
   const hasJoined = !!myJoin;
   const spotsLeft = match.max_players - (match.player_count || 0);
   const isOpen = match.status === "open";

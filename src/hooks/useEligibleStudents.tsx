@@ -8,7 +8,7 @@ export function useEligibleStudents(houseIdOverride?: string | null) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, full_name, class_name, darajah, is_under_18")
+        .select("tr_number, full_name, class_name, darajah, is_under_18")
         .eq("house_id", houseIdOverride!)
         .order("full_name");
       if (error) throw error;

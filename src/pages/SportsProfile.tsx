@@ -29,13 +29,13 @@ export default function SportsProfile() {
 
   // Fetch latest fitness log for radar
   const { data: fitnessLog } = useQuery({
-    queryKey: ["latest-fitness", profile?.id],
+    queryKey: ["latest-fitness", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       const { data } = await supabase
         .from("fitness_logs")
         .select("*")
-        .eq("student_id", profile!.id)
+        .eq("student_tr", profile!.tr_number)
         .order("logged_at", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -45,13 +45,13 @@ export default function SportsProfile() {
 
   // Fetch achievements
   const { data: achievements } = useQuery({
-    queryKey: ["achievements", profile?.id],
+    queryKey: ["achievements", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       const { data } = await supabase
         .from("achievements")
         .select("*")
-        .eq("student_id", profile!.id)
+        .eq("student_tr", profile!.tr_number)
         .order("earned_at", { ascending: false });
       return data || [];
     },
@@ -59,13 +59,13 @@ export default function SportsProfile() {
 
   // Participated events
   const { data: participations, isLoading: partsLoading } = useQuery({
-    queryKey: ["my-participations", profile?.id],
+    queryKey: ["my-participations", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("participations")
         .select("id, status, event_id, season_id, events(name, is_team_event, sports(name)), seasons(name)")
-        .eq("student_id", profile!.id)
+        .eq("student_tr", profile!.tr_number)
         .order("registered_at", { ascending: false });
       if (error) throw error;
       return data;
@@ -74,14 +74,14 @@ export default function SportsProfile() {
 
   // Match results via team_members → teams → matches
   const { data: myMatches, isLoading: matchesLoading } = useQuery({
-    queryKey: ["my-matches", profile?.id],
+    queryKey: ["my-matches", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       // Get teams this student is on
       const { data: memberships } = await supabase
         .from("team_members")
         .select("team_id")
-        .eq("student_id", profile!.id);
+        .eq("student_tr", profile!.tr_number);
       if (!memberships?.length) return [];
 
       const teamIds = memberships.map((m) => m.team_id);
@@ -109,13 +109,13 @@ export default function SportsProfile() {
 
   // Career points
   const { data: careerPoints } = useQuery({
-    queryKey: ["my-career-points", profile?.id],
+    queryKey: ["my-career-points", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       const { data } = await supabase
         .from("point_transactions")
         .select("points, source")
-        .eq("student_id", profile!.id);
+        .eq("student_tr", profile!.tr_number);
       if (!data?.length) return { total: 0, placement: 0, participation: 0 };
       let total = 0, placement = 0, participation = 0;
       for (const p of data) {

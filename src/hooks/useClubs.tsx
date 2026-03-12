@@ -150,14 +150,14 @@ export function useClubEvents(clubId: string | null) {
 export function useMyMembership(clubId: string | null) {
   const { data: profile } = useProfile();
   return useQuery({
-    queryKey: ["my-membership", clubId, profile?.id],
+    queryKey: ["my-membership", clubId, profile?.tr_number],
     enabled: !!clubId && !!profile,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("club_members")
         .select("*")
         .eq("club_id", clubId!)
-        .eq("student_id", profile!.id)
+        .eq("student_id", profile!.tr_number)
         .eq("status", "active" as any)
         .maybeSingle();
       if (error) throw error;
@@ -175,7 +175,7 @@ export function useJoinClub() {
       if (!profile) throw new Error("No profile");
       const { error } = await supabase.from("club_members").insert({
         club_id: clubId,
-        student_id: profile.id,
+        student_id: profile.tr_number,
         role: "member" as any,
         status: "active" as any,
       });
@@ -203,7 +203,7 @@ export function useLeaveClub() {
         .from("club_members")
         .delete()
         .eq("club_id", clubId)
-        .eq("student_id", profile.id);
+        .eq("student_id", profile.tr_number);
       if (error) throw error;
     },
     onSuccess: () => {

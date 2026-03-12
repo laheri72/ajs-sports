@@ -32,7 +32,7 @@ function EventCard({ ev, clubInchargeId, clubSubInchargeId }: { ev: any; clubInc
   const markAttendance = useMarkAttendance();
   const [showParticipants, setShowParticipants] = useState(false);
 
-  const isIncharge = profile && (profile.id === clubInchargeId || profile.id === clubSubInchargeId);
+  const isIncharge = profile && (profile.tr_number === clubInchargeId || profile.tr_number === clubSubInchargeId);
   const registered = participants?.filter((p) => p.status !== "absent").length || 0;
   const spotsLeft = ev.max_participants ? ev.max_participants - registered : null;
   const isFull = spotsLeft !== null && spotsLeft <= 0;

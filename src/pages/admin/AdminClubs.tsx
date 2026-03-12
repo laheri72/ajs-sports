@@ -49,7 +49,7 @@ export default function AdminClubs() {
   const handleCreateClub = () => {
     if (!form.name || !form.sport_id) return;
     createClub.mutate(
-      { name: form.name, sport_id: form.sport_id, description: form.description || undefined, created_by: profile?.id },
+      { name: form.name, sport_id: form.sport_id, description: form.description || undefined, created_by: profile?.tr_number },
       { onSuccess: () => { setShowCreate(false); setForm({ name: "", sport_id: "", description: "" }); } }
     );
   };
@@ -65,7 +65,7 @@ export default function AdminClubs() {
         location: eventForm.location || undefined,
         event_date: eventForm.event_date || undefined,
         max_participants: eventForm.max_participants ? parseInt(eventForm.max_participants) : undefined,
-        created_by: profile?.id,
+        created_by: profile?.tr_number,
       },
       { onSuccess: () => { setShowEventForm(null); setEventForm({ title: "", event_type: "practice", description: "", location: "", event_date: "", max_participants: "" }); } }
     );

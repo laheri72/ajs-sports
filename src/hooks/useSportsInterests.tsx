@@ -8,7 +8,7 @@ export type ConfidenceLevel = "low" | "medium" | "high";
 
 export interface SportsInterest {
   id: string;
-  student_id: string;
+  student_tr: string;
   sport_id: string;
   interest_level: InterestLevel;
   confidence_level: ConfidenceLevel;
@@ -23,13 +23,13 @@ export interface SportsInterest {
 export function useMyInterests() {
   const { data: profile } = useProfile();
   return useQuery({
-    queryKey: ["my-interests", profile?.id],
+    queryKey: ["my-interests", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sports_interests")
         .select("*, sports(name, sport_type)")
-        .eq("student_id", profile!.id)
+        .eq("student_tr", profile!.tr_number)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as SportsInterest[];
@@ -53,14 +53,14 @@ export function useUpsertInterest() {
         .from("sports_interests")
         .upsert(
           [{
-            student_id: profile.id,
+            student_tr: profile.tr_number,
             sport_id: params.sport_id,
             interest_level: params.interest_level,
             confidence_level: params.confidence_level,
             notes: params.notes || null,
             created_by: "student" as const,
           }],
-          { onConflict: "student_id,sport_id" }
+          { onConflict: "student_tr,sport_id" }
         );
       if (error) throw error;
     },
@@ -94,7 +94,7 @@ export function useAllInterests(filters?: { sportId?: string; interestLevel?: st
     queryFn: async () => {
       let query = supabase
         .from("sports_interests")
-        .select("*, sports(name, sport_type), profiles!sports_interests_student_id_fkey(full_name, class_name, darajah, house_id, houses:house_id(name, color))")
+        .select("*, sports(name, sport_type), profiles:student_tr(full_name, class_name, darajah, house_id, houses:house_id(name, color))")
         .order("created_at", { ascending: false });
 
       if (filters?.sportId) query = query.eq("sport_id", filters.sportId);
@@ -115,7 +115,7 @@ export function useNeedsCoaching() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sports_interests")
-        .select("*, sports(name, sport_type), profiles!sports_interests_student_id_fkey(full_name, class_name, darajah, house_id, houses:house_id(name, color))")
+        .select("*, sports(name, sport_type), profiles:student_tr(full_name, class_name, darajah, house_id, houses:house_id(name, color))")
         .in("interest_level", ["curious", "beginner"] as any)
         .eq("confidence_level", "low" as any)
         .order("created_at", { ascending: false });

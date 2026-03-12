@@ -35,7 +35,7 @@ export default function AdminRoleDialog({ open, onOpenChange }: Props) {
     queryFn: async () => {
       const { data: profiles, error: pErr } = await supabase
         .from("profiles")
-        .select("id, user_id, full_name")
+        .select("tr_number, user_id, full_name")
         .eq("house_id", houseId!)
         .order("full_name");
       if (pErr) throw pErr;
@@ -121,7 +121,7 @@ export default function AdminRoleDialog({ open, onOpenChange }: Props) {
                     const isCaptain = m.roles.includes("captain");
                     const isCoCaptain = m.roles.includes("co_captain");
                     return (
-                      <TableRow key={m.id}>
+                      <TableRow key={m.tr_number}>
                         <TableCell className="font-medium">{m.full_name || "Unnamed"}</TableCell>
                         <TableCell>
                           <Button

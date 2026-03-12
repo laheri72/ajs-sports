@@ -23,13 +23,13 @@ export default function Fitness() {
 
   // Fetch all fitness logs
   const { data: fitnessLogs, isLoading: logsLoading } = useQuery({
-    queryKey: ["fitness-logs", profile?.id],
+    queryKey: ["fitness-logs", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("fitness_logs")
         .select("*")
-        .eq("student_id", profile!.id)
+        .eq("student_tr", profile!.tr_number)
         .order("logged_at", { ascending: true });
       if (error) throw error;
       return data || [];
@@ -38,14 +38,14 @@ export default function Fitness() {
 
   // Fetch participations with results for correlation
   const { data: perfData } = useQuery({
-    queryKey: ["fitness-performance", profile?.id],
+    queryKey: ["fitness-performance", profile?.tr_number],
     enabled: !!profile,
     queryFn: async () => {
       // Get participations
       const { data: parts } = await supabase
         .from("participations")
         .select("id, event_id, events(name, sports(name))")
-        .eq("student_id", profile!.id);
+        .eq("student_id", profile!.tr_number);
 
       // Get results for those participations
       const partIds = (parts || []).map((p) => p.id);

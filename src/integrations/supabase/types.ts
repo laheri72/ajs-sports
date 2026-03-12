@@ -20,7 +20,7 @@ export type Database = {
           earned_at: string | null
           icon: string | null
           id: string
-          student_id: string
+          student_tr: string
           title: string
         }
         Insert: {
@@ -28,7 +28,7 @@ export type Database = {
           earned_at?: string | null
           icon?: string | null
           id?: string
-          student_id: string
+          student_tr: string
           title: string
         }
         Update: {
@@ -36,16 +36,16 @@ export type Database = {
           earned_at?: string | null
           icon?: string | null
           id?: string
-          student_id?: string
+          student_tr?: string
           title?: string
         }
         Relationships: [
           {
-            foreignKeyName: "achievements_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "achievements_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -98,7 +98,7 @@ export type Database = {
             columns: ["issued_by"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
           {
             foreignKeyName: "certifications_sport_id_fkey"
@@ -112,7 +112,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -151,7 +151,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -205,7 +205,7 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -247,7 +247,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -291,14 +291,14 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
           {
             foreignKeyName: "clubs_incharge_id_fkey"
             columns: ["incharge_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
           {
             foreignKeyName: "clubs_sport_id_fkey"
@@ -312,7 +312,7 @@ export type Database = {
             columns: ["sub_incharge_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -415,7 +415,7 @@ export type Database = {
           logged_at: string | null
           speed: number | null
           strength: number | null
-          student_id: string
+          student_tr: string
         }
         Insert: {
           agility?: number | null
@@ -425,7 +425,7 @@ export type Database = {
           logged_at?: string | null
           speed?: number | null
           strength?: number | null
-          student_id: string
+          student_tr: string
         }
         Update: {
           agility?: number | null
@@ -435,15 +435,15 @@ export type Database = {
           logged_at?: string | null
           speed?: number | null
           strength?: number | null
-          student_id?: string
+          student_tr?: string
         }
         Relationships: [
           {
-            foreignKeyName: "fitness_logs_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "fitness_logs_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -529,7 +529,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -576,7 +576,7 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
           {
             foreignKeyName: "match_requests_sport_id_fkey"
@@ -687,7 +687,7 @@ export type Database = {
           registered_at: string | null
           season_id: string
           status: Database["public"]["Enums"]["participation_status"] | null
-          student_id: string | null
+          student_tr: string | null
           team_id: string | null
         }
         Insert: {
@@ -699,7 +699,7 @@ export type Database = {
           registered_at?: string | null
           season_id: string
           status?: Database["public"]["Enums"]["participation_status"] | null
-          student_id?: string | null
+          student_tr?: string | null
           team_id?: string | null
         }
         Update: {
@@ -711,7 +711,7 @@ export type Database = {
           registered_at?: string | null
           season_id?: string
           status?: Database["public"]["Enums"]["participation_status"] | null
-          student_id?: string | null
+          student_tr?: string | null
           team_id?: string | null
         }
         Relationships: [
@@ -744,11 +744,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "participations_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "participations_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
           {
             foreignKeyName: "participations_team_id_fkey"
@@ -769,7 +769,7 @@ export type Database = {
           points: number
           season_id: string
           source: Database["public"]["Enums"]["point_source"]
-          student_id: string | null
+          student_tr: string | null
         }
         Insert: {
           created_at?: string | null
@@ -780,7 +780,7 @@ export type Database = {
           points: number
           season_id: string
           source: Database["public"]["Enums"]["point_source"]
-          student_id?: string | null
+          student_tr?: string | null
         }
         Update: {
           created_at?: string | null
@@ -791,7 +791,7 @@ export type Database = {
           points?: number
           season_id?: string
           source?: Database["public"]["Enums"]["point_source"]
-          student_id?: string | null
+          student_tr?: string | null
         }
         Relationships: [
           {
@@ -816,11 +816,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "point_transactions_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "point_transactions_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -836,10 +836,9 @@ export type Database = {
           full_name: string | null
           hizb_id: string | null
           house_id: string | null
-          id: string
           is_under_18: boolean | null
           its_number: string | null
-          tr_number: string | null
+          tr_number: string
           updated_at: string | null
           user_id: string
         }
@@ -854,10 +853,9 @@ export type Database = {
           full_name?: string | null
           hizb_id?: string | null
           house_id?: string | null
-          id?: string
           is_under_18?: boolean | null
           its_number?: string | null
-          tr_number?: string | null
+          tr_number: string
           updated_at?: string | null
           user_id: string
         }
@@ -872,10 +870,9 @@ export type Database = {
           full_name?: string | null
           hizb_id?: string | null
           house_id?: string | null
-          id?: string
           is_under_18?: boolean | null
           its_number?: string | null
-          tr_number?: string | null
+          tr_number?: string
           updated_at?: string | null
           user_id?: string
         }
@@ -1016,7 +1013,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -1094,7 +1091,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -1104,21 +1101,21 @@ export type Database = {
           id: string
           role: Database["public"]["Enums"]["event_role"]
           season_id: string
-          student_id: string
+          student_tr: string
         }
         Insert: {
           event_id: string
           id?: string
           role: Database["public"]["Enums"]["event_role"]
           season_id: string
-          student_id: string
+          student_tr: string
         }
         Update: {
           event_id?: string
           id?: string
           role?: Database["public"]["Enums"]["event_role"]
           season_id?: string
-          student_id?: string
+          student_tr?: string
         }
         Relationships: [
           {
@@ -1136,11 +1133,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "student_event_roles_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "student_event_roles_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -1193,7 +1190,7 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
           {
             foreignKeyName: "student_selections_house_id_fkey"
@@ -1221,7 +1218,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -1266,7 +1263,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -1320,7 +1317,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
         ]
       }
@@ -1328,28 +1325,28 @@ export type Database = {
         Row: {
           id: string
           role: Database["public"]["Enums"]["event_role"] | null
-          student_id: string
+          student_tr: string
           team_id: string
         }
         Insert: {
           id?: string
           role?: Database["public"]["Enums"]["event_role"] | null
-          student_id: string
+          student_tr: string
           team_id: string
         }
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["event_role"] | null
-          student_id?: string
+          student_tr?: string
           team_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "team_members_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "team_members_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
           {
             foreignKeyName: "team_members_team_id_fkey"
@@ -1476,28 +1473,28 @@ export type Database = {
         Row: {
           attended_at: string | null
           id: string
-          student_id: string
+          student_tr: string
           training_id: string
         }
         Insert: {
           attended_at?: string | null
           id?: string
-          student_id: string
+          student_tr: string
           training_id: string
         }
         Update: {
           attended_at?: string | null
           id?: string
-          student_id?: string
+          student_tr?: string
           training_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "training_attendance_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "training_attendance_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
           {
             foreignKeyName: "training_attendance_training_id_fkey"
@@ -1653,7 +1650,7 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["tr_number"]
           },
           {
             foreignKeyName: "profiles_house_id_fkey"

@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkRegistration = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("id")
+      .select("tr_number")
       .eq("user_id", userId)
       .maybeSingle();
     setIsRegistered(!!data);

@@ -91,7 +91,7 @@ serve(async (req: Request) => {
           // Check if profile already exists (created by trigger matching edu_email)
           const { data: existingProfile } = await supabaseAdmin
             .from("profiles")
-            .select("id")
+            .select("tr_number")
             .eq("user_id", authData.user.id)
             .maybeSingle();
 
@@ -100,7 +100,7 @@ serve(async (req: Request) => {
             const { error } = await supabaseAdmin
               .from("profiles")
               .update(profilePayload)
-              .eq("id", existingProfile.id);
+              .eq("tr_number", existingProfile.tr_number);
             profileError = error;
           } else {
             const { error } = await supabaseAdmin
@@ -144,11 +144,11 @@ serve(async (req: Request) => {
     }
 
     if (action === "update") {
-      const { profile_id, updates } = students;
+      const { tr_number, updates } = students;
       const { error } = await supabaseAdmin
         .from("profiles")
         .update(updates)
-        .eq("id", profile_id);
+        .eq("tr_number", tr_number);
       if (error) throw error;
       return new Response(JSON.stringify({ success: true }), {
         status: 200,
@@ -169,7 +169,7 @@ serve(async (req: Request) => {
     }
 
     if (action === "delete") {
-      const { profile_id, user_id } = students;
+      const { tr_number, user_id } = students;
       // Delete the auth user (cascades to profile via trigger or we clean up)
       if (user_id) {
         await supabaseAdmin.auth.admin.deleteUser(user_id);
@@ -178,7 +178,7 @@ serve(async (req: Request) => {
       const { error } = await supabaseAdmin
         .from("profiles")
         .delete()
-        .eq("id", profile_id);
+        .eq("tr_number", tr_number);
       if (error) throw error;
       return new Response(JSON.stringify({ success: true }), {
         status: 200,

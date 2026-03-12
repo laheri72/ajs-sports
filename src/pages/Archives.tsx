@@ -99,26 +99,26 @@ export default function Archives() {
     if (!seasonId || !selectedSeason) return;
     const { data: pts } = await supabase
       .from("point_transactions")
-      .select("student_id, points, source, description, houses:house_id(name)")
+      .select("student_tr, points, source, description, houses:house_id(name)")
       .eq("season_id", seasonId)
-      .not("student_id", "is", null);
+      .not("student_tr", "is", null);
 
     if (!pts?.length) {
       toast.error("No medal data to export");
       return;
     }
 
-    const studentIds = [...new Set(pts.map((p) => p.student_id).filter(Boolean))];
+    const studentTrs = [...new Set(pts.map((p) => p.student_tr).filter(Boolean))];
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, full_name, class_name")
-      .in("id", studentIds as string[]);
+      .select("tr_number, full_name, class_name")
+      .in("tr_number", studentTrs as string[]);
 
-    const profileMap = Object.fromEntries((profiles || []).map((p) => [p.id, p]));
+    const profileMap = Object.fromEntries((profiles || []).map((p) => [p.tr_number, p]));
 
     const headers = ["Student", "Class", "House", "Source", "Description", "Points"];
     const rows = pts.map((p: any) => {
-      const prof = profileMap[p.student_id!] || {};
+      const prof = profileMap[p.student_tr!] || {};
       return [
         (prof as any).full_name || "Unknown",
         (prof as any).class_name || "—",

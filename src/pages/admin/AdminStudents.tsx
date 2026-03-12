@@ -120,9 +120,9 @@ export default function AdminStudents() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ profileId, updates }: { profileId: string; updates: Partial<StudentForm> }) => {
+    mutationFn: async ({ trNumber, updates }: { trNumber: string; updates: Partial<StudentForm> }) => {
       const res = await supabase.functions.invoke("manage-students", {
-        body: { action: "update", students: { profile_id: profileId, updates } },
+        body: { action: "update", students: { tr_number: trNumber, updates } },
       });
       if (res.error) throw res.error;
       return res.data;
@@ -139,9 +139,9 @@ export default function AdminStudents() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async ({ profileId, userId }: { profileId: string; userId: string }) => {
+    mutationFn: async ({ trNumber, userId }: { trNumber: string; userId: string }) => {
       const res = await supabase.functions.invoke("manage-students", {
-        body: { action: "delete", students: { profile_id: profileId, user_id: userId } },
+        body: { action: "delete", students: { tr_number: trNumber, user_id: userId } },
       });
       if (res.error) throw res.error;
       return res.data;
@@ -168,7 +168,7 @@ export default function AdminStudents() {
   const handleEditStudent = () => {
     if (!selectedStudent) return;
     updateMutation.mutate({
-      profileId: selectedStudent.id,
+      trNumber: selectedStudent.tr_number,
       updates: {
         full_name: form.full_name,
         tr_number: form.tr_number || null,
@@ -424,7 +424,7 @@ export default function AdminStudents() {
               </TableRow>
             ) : (
               filteredStudents?.map((s: any) => (
-                <TableRow key={s.id}>
+                <TableRow key={s.tr_number}>
                   <TableCell className="font-medium">{s.full_name || "—"}</TableCell>
                   <TableCell>{s.tr_number || "—"}</TableCell>
                   <TableCell>{s.its_number || "—"}</TableCell>
@@ -542,7 +542,7 @@ export default function AdminStudents() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => selectedStudent && deleteMutation.mutate({ profileId: selectedStudent.id, userId: selectedStudent.user_id })}
+              onClick={() => selectedStudent && deleteMutation.mutate({ trNumber: selectedStudent.tr_number, userId: selectedStudent.user_id })}
             >
               {deleteMutation.isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>

@@ -16,7 +16,7 @@ export default function AdminOverview() {
         supabase.from("sports").select("id", { count: "exact", head: true }),
         supabase.from("events").select("id", { count: "exact", head: true }),
         supabase.from("hizb").select("id", { count: "exact", head: true }),
-        supabase.from("profiles").select("id", { count: "exact", head: true }),
+        supabase.from("profiles").select("tr_number", { count: "exact", head: true }),
       ]);
       return {
         seasons: seasons.count || 0,

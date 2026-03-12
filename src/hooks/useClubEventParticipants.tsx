@@ -37,14 +37,14 @@ export function useEventParticipants(clubEventId: string | null) {
 export function useMyEventRegistration(clubEventId: string | null) {
   const { data: profile } = useProfile();
   return useQuery({
-    queryKey: ["my-event-registration", clubEventId, profile?.id],
+    queryKey: ["my-event-registration", clubEventId, profile?.tr_number],
     enabled: !!clubEventId && !!profile,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("club_event_participants")
         .select("*")
         .eq("club_event_id", clubEventId!)
-        .eq("student_id", profile!.id)
+        .eq("student_id", profile!.tr_number)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -60,7 +60,7 @@ export function useRegisterForEvent() {
       if (!profile) throw new Error("No profile");
       const { error } = await supabase.from("club_event_participants").insert({
         club_event_id: clubEventId,
-        student_id: profile.id,
+        student_id: profile.tr_number,
       } as any);
       if (error) throw error;
     },
@@ -83,7 +83,7 @@ export function useCancelEventRegistration() {
         .from("club_event_participants")
         .delete()
         .eq("club_event_id", clubEventId)
-        .eq("student_id", profile.id);
+        .eq("student_id", profile.tr_number);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -184,11 +184,11 @@ export function useClubAnalytics() {
       if (topStudentIds.length > 0) {
         const { data: profiles } = await supabase
           .from("profiles")
-          .select("id, full_name")
-          .in("id", topStudentIds.map(([id]) => id));
+          .select("tr_number, full_name")
+          .in("tr_number", topStudentIds.map(([id]) => id));
         topStudents = topStudentIds.map(([id, count]) => ({
           id,
-          name: profiles?.find((p) => p.id === id)?.full_name || "Unknown",
+          name: profiles?.find((p) => p.tr_number === id)?.full_name || "Unknown",
           attended: count,
         }));
       }

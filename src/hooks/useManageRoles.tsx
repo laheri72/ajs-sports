@@ -10,7 +10,7 @@ export function useHouseRoles(houseId: string | null) {
       // Get all profiles in the house, then get their roles
       const { data: profiles, error: pErr } = await supabase
         .from("profiles")
-        .select("id, user_id, full_name")
+        .select("tr_number, user_id, full_name")
         .eq("house_id", houseId!);
       if (pErr) throw pErr;
 

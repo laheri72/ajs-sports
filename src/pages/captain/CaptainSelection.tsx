@@ -83,7 +83,7 @@ export default function CaptainSelection() {
       rank: i + 1,
       studentId: draftSlots[i + 1] ?? null,
     }));
-    saveDraft.mutate({ seasonId: effectiveSeasonId, sportId, category, houseId: effectiveHouseId, createdBy: profile.id, slots });
+    saveDraft.mutate({ seasonId: effectiveSeasonId, sportId, category, houseId: effectiveHouseId, createdBy: profile.tr_number, slots });
   };
 
   const handleSubmitFinal = () => {
@@ -93,7 +93,7 @@ export default function CaptainSelection() {
       studentId: draftSlots[i + 1] ?? null,
     }));
     saveDraft.mutate(
-      { seasonId: effectiveSeasonId, sportId, category, houseId: effectiveHouseId, createdBy: profile.id, slots },
+      { seasonId: effectiveSeasonId, sportId, category, houseId: effectiveHouseId, createdBy: profile.tr_number, slots },
       {
         onSuccess: () => {
           submitFinal.mutate({ seasonId: effectiveSeasonId!, sportId: sportId!, category: category!, houseId: effectiveHouseId! });
