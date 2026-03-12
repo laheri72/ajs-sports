@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export interface Certification {
   id: string;
-  student_id: string;
+  student_tr: string;
   sport_id: string;
   score_snapshot: number;
   proficiency_level: string;
@@ -28,7 +28,7 @@ export function useCertifications(year?: number) {
     queryFn: async () => {
       let query = supabase
         .from("certifications")
-        .select("*, profiles:student_id(full_name, class_name, darajah, tr_number), sports:sport_id(name, sport_type), issuer:issued_by(full_name)")
+        .select("*, profiles:student_tr(full_name, class_name, darajah, tr_number), sports:sport_id(name, sport_type), issuer:issued_by(full_name)")
         .order("issued_at", { ascending: false });
 
       if (year) query = query.eq("valid_year", year);
@@ -49,7 +49,7 @@ export function useMyCertifications() {
       const { data, error } = await supabase
         .from("certifications")
         .select("*, sports:sport_id(name, sport_type)")
-        .eq("student_id", profile!.tr_number)
+        .eq("student_tr", profile!.tr_number)
         .eq("status", "issued")
         .order("valid_year", { ascending: false });
       if (error) throw error;
@@ -65,7 +65,7 @@ export function useCertificationById(id: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("certifications")
-        .select("*, profiles:student_id(full_name, class_name, darajah, tr_number), sports:sport_id(name, sport_type), issuer:issued_by(full_name)")
+        .select("*, profiles:student_tr(full_name, class_name, darajah, tr_number), sports:sport_id(name, sport_type), issuer:issued_by(full_name)")
         .eq("id", id)
         .single();
       if (error) throw error;
@@ -87,7 +87,7 @@ export function useIssueCertificate() {
       if (numErr) throw numErr;
 
       const { data, error } = await supabase.from("certifications").insert({
-        student_id: studentId,
+        student_tr: studentId,
         sport_id: sportId,
         score_snapshot: score,
         proficiency_level: level as any,

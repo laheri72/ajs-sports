@@ -60,7 +60,7 @@ export default function CaptainSelection() {
     if (existingSelections) {
       const map: Record<number, string | null> = {};
       existingSelections.forEach((s) => {
-        map[s.rank] = s.student_id;
+        map[s.rank] = s.student_tr;
       });
       setDraftSlots(map);
     } else {

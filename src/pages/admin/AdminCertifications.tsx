@@ -51,12 +51,12 @@ export default function AdminCertifications() {
 
   // Eligible = advanced, expert, master who don't already have a cert this year
   const certifiedKeys = new Set(
-    certifications?.filter(c => c.status !== "revoked").map(c => `${c.student_id}-${c.sport_id}`) || []
+    certifications?.filter(c => c.status !== "revoked").map(c => `${c.student_tr}-${c.sport_id}`) || []
   );
 
   const eligible = scores?.filter(s => {
     if (!["advanced", "expert", "master"].includes(s.proficiency_level)) return false;
-    if (certifiedKeys.has(`${s.student_id}-${s.sport_id}`)) return false;
+    if (certifiedKeys.has(`${s.student_tr}-${s.sport_id}`)) return false;
     if (sportFilter !== "all" && s.sport_id !== sportFilter) return false;
     if (search) {
       const q = search.toLowerCase();
@@ -68,7 +68,7 @@ export default function AdminCertifications() {
   const handleIssue = () => {
     if (!issueDialog) return;
     issueCert.mutate({
-      studentId: issueDialog.student_id,
+      studentId: issueDialog.student_tr,
       sportId: issueDialog.sport_id,
       score: issueDialog.total_score,
       level: issueDialog.proficiency_level,

@@ -63,7 +63,7 @@ export default function AdminProficiency() {
   });
 
   // Summary stats
-  const totalStudents = new Set(filtered?.map((s) => s.student_id)).size;
+  const totalStudents = new Set(filtered?.map((s) => s.student_tr)).size;
   const avgScore = filtered?.length ? Math.round(filtered.reduce((sum, s) => sum + s.total_score, 0) / filtered.length) : 0;
   const masterCount = filtered?.filter((s) => s.proficiency_level === "master").length || 0;
   const expertCount = filtered?.filter((s) => s.proficiency_level === "expert").length || 0;

@@ -9,7 +9,7 @@ interface SelectionRow {
   sport_id: string;
   category: string;
   rank: number;
-  student_id: string;
+  student_tr: string;
   eligibility: string | null;
   is_final: boolean;
   is_locked: boolean;
@@ -114,7 +114,7 @@ export function useSaveDraft() {
           sport_id: sportId,
           category,
           rank: s.rank,
-          student_id: s.studentId!,
+          student_tr: s.studentId!,
           eligibility: "Eligible",
           created_by: createdBy,
           is_final: false,

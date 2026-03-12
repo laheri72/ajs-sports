@@ -58,7 +58,7 @@ export function useMatchRequestPlayers(requestId: string | null) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("match_request_players")
-        .select("*, profiles:student_id(full_name, class_name, house_id, houses:house_id(name, color))")
+        .select("*, profiles:student_tr(full_name, class_name, house_id, houses:house_id(name, color))")
         .eq("request_id", requestId!)
         .order("joined_at");
       if (error) throw error;
@@ -77,7 +77,7 @@ export function useMyMatchJoin(requestId: string | null) {
         .from("match_request_players")
         .select("*")
         .eq("request_id", requestId!)
-        .eq("student_id", profile!.tr_number)
+        .eq("student_tr", profile!.tr_number)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -120,7 +120,7 @@ export function useJoinMatchRequest() {
       if (!profile) throw new Error("No profile");
       const { error } = await supabase.from("match_request_players").insert({
         request_id: requestId,
-        student_id: profile.tr_number,
+        student_tr: profile.tr_number,
       } as any);
       if (error) throw error;
     },
@@ -144,7 +144,7 @@ export function useLeaveMatchRequest() {
         .from("match_request_players")
         .delete()
         .eq("request_id", requestId)
-        .eq("student_id", profile.tr_number);
+        .eq("student_tr", profile.tr_number);
       if (error) throw error;
     },
     onSuccess: () => {

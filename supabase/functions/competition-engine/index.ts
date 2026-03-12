@@ -88,9 +88,9 @@ async function generateParticipations(tx: any, seasonId: string) {
   `;
 
   const existing = await tx`
-    SELECT student_id, event_id FROM participations WHERE season_id = ${seasonId}
+    SELECT student_tr, event_id FROM participations WHERE season_id = ${seasonId}
   `;
-  const existingSet = new Set(existing.map((p: any) => `${p.student_id}_${p.event_id}`));
+  const existingSet = new Set(existing.map((p: any) => `${p.student_tr}_${p.event_id}`));
 
   const rows: any[] = [];
   let skipped = 0;
@@ -103,11 +103,11 @@ async function generateParticipations(tx: any, seasonId: string) {
     );
     if (!event) { skipped++; continue; }
 
-    const key = `${sel.student_id}_${event.id}`;
+    const key = `${sel.student_tr}_${event.id}`;
     if (existingSet.has(key)) { skipped++; continue; }
 
     rows.push({
-      student_id: sel.student_id,
+      student_tr: sel.student_tr,
       event_id: event.id,
       season_id: seasonId,
       house_id: sel.house_id,
@@ -118,7 +118,7 @@ async function generateParticipations(tx: any, seasonId: string) {
 
   if (rows.length > 0) {
     await tx`
-      INSERT INTO participations ${tx(rows, "student_id", "event_id", "season_id", "house_id", "status")}
+      INSERT INTO participations ${tx(rows, "student_tr", "event_id", "season_id", "house_id", "status")}
     `;
   }
 
@@ -140,12 +140,12 @@ async function generateTeams(tx: any, seasonId: string) {
   if (!events.length) throw new Error("No team events found for this season");
 
   const parts = await tx`
-    SELECT p.id, p.student_id, p.event_id, p.house_id,
+    SELECT p.id, p.student_tr, p.event_id, p.house_id,
            COALESCE(ss.rank, 999) AS selection_rank
     FROM participations p
     JOIN events e ON e.id = p.event_id
     LEFT JOIN student_selections ss
-      ON ss.student_id = p.student_id
+      ON ss.student_tr = p.student_tr
       AND ss.season_id = p.season_id
       AND ss.sport_id = e.sport_id
       AND ss.house_id = p.house_id
@@ -192,13 +192,13 @@ async function generateTeams(tx: any, seasonId: string) {
       const maxMembers = lineup + (event.substitutes || 0);
       const memberRows = houseParts.slice(0, maxMembers).map((p: any, i: number) => ({
         team_id: team.id,
-        student_id: p.student_id,
+        student_tr: p.student_tr,
         role: i < lineup ? "player" : "substitute",
       }));
 
       if (memberRows.length > 0) {
         await tx`
-          INSERT INTO team_members ${tx(memberRows, "team_id", "student_id", "role")}
+          INSERT INTO team_members ${tx(memberRows, "team_id", "student_tr", "role")}
         `;
         membersCreated += memberRows.length;
       }

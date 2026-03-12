@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 export interface StudentSportScore {
   id: string;
-  student_id: string;
+  student_tr: string;
   sport_id: string;
   competition_score: number;
   club_score: number;
@@ -30,7 +30,7 @@ export function useSportScores(sportFilter?: string) {
     queryFn: async () => {
       let query = supabase
         .from("student_sport_scores")
-        .select("*, profiles:student_id(full_name, class_name, darajah, tr_number, house_id, houses:house_id(name, color)), sports:sport_id(name, sport_type)")
+        .select("*, profiles:student_tr(full_name, class_name, darajah, tr_number, house_id, houses:house_id(name, color)), sports:sport_id(name, sport_type)")
         .order("total_score", { ascending: false });
 
       if (sportFilter && sportFilter !== "all") {

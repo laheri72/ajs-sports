@@ -44,11 +44,11 @@ export default function SelectionPreviewDialog({
         .from("student_selections")
         .select(`
           rank,
-          student_id,
+          student_tr,
           is_final,
           is_locked,
           eligibility,
-          profiles:student_id(full_name, class_name, darajah, is_under_18)
+          profiles:student_tr(full_name, class_name, darajah, is_under_18)
         `)
         .eq("season_id", seasonId)
         .eq("house_id", houseId)

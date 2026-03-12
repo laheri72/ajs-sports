@@ -24,9 +24,9 @@ export default function HallOfAthletes() {
   const experts = certifications?.filter(c => c.status === "issued" && c.proficiency_level === "expert") || [];
 
   // Rising talents: high scores not yet certified
-  const certifiedKeys = new Set(certifications?.map(c => `${c.student_id}-${c.sport_id}`) || []);
+  const certifiedKeys = new Set(certifications?.map(c => `${c.student_tr}-${c.sport_id}`) || []);
   const risingTalents = scores
-    ?.filter(s => s.total_score >= 41 && !certifiedKeys.has(`${s.student_id}-${s.sport_id}`))
+    ?.filter(s => s.total_score >= 41 && !certifiedKeys.has(`${s.student_tr}-${s.sport_id}`))
     .sort((a, b) => b.total_score - a.total_score)
     .slice(0, 10) || [];
 

@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface StudentRanking {
-  student_id: string;
+  student_tr: string;
   full_name: string;
   house_name: string;
   total_points: number;
@@ -56,7 +56,7 @@ export function useStudentLeaderboard(seasonId?: string) {
       if (error) throw error;
 
       const rankings: StudentRanking[] = ((data as any[]) || []).map((r: any) => ({
-        student_id: r.student_id,
+        student_tr: r.student_tr,
         full_name: r.student_name || "Unknown",
         house_name: r.house_name || "",
         total_points: r.total_points ?? 0,

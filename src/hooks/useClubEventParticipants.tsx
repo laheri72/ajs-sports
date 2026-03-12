@@ -6,7 +6,7 @@ import { toast } from "sonner";
 export interface ClubEventParticipant {
   id: string;
   club_event_id: string;
-  student_id: string;
+  student_tr: string;
   status: "registered" | "attended" | "absent";
   joined_at: string;
   profiles?: {
@@ -25,7 +25,7 @@ export function useEventParticipants(clubEventId: string | null) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("club_event_participants")
-        .select("*, profiles:student_id(full_name, class_name, darajah, house_id, houses:house_id(name, color))")
+        .select("*, profiles:student_tr(full_name, class_name, darajah, house_id, houses:house_id(name, color))")
         .eq("club_event_id", clubEventId!)
         .order("joined_at");
       if (error) throw error;
@@ -44,7 +44,7 @@ export function useMyEventRegistration(clubEventId: string | null) {
         .from("club_event_participants")
         .select("*")
         .eq("club_event_id", clubEventId!)
-        .eq("student_id", profile!.tr_number)
+        .eq("student_tr", profile!.tr_number)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -60,7 +60,7 @@ export function useRegisterForEvent() {
       if (!profile) throw new Error("No profile");
       const { error } = await supabase.from("club_event_participants").insert({
         club_event_id: clubEventId,
-        student_id: profile.tr_number,
+        student_tr: profile.tr_number,
       } as any);
       if (error) throw error;
     },
@@ -83,7 +83,7 @@ export function useCancelEventRegistration() {
         .from("club_event_participants")
         .delete()
         .eq("club_event_id", clubEventId)
-        .eq("student_id", profile.tr_number);
+        .eq("student_tr", profile.tr_number);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -128,7 +128,7 @@ export function useClubAnalytics() {
       // Get all participants
       const { data: participants, error: pErr } = await supabase
         .from("club_event_participants")
-        .select("club_event_id, student_id, status");
+        .select("club_event_id, student_tr, status");
       if (pErr) throw pErr;
 
       // Build analytics per club
@@ -173,7 +173,7 @@ export function useClubAnalytics() {
       const studentCounts: Record<string, number> = {};
       for (const p of participants || []) {
         if (p.status === "attended") {
-          studentCounts[p.student_id] = (studentCounts[p.student_id] || 0) + 1;
+          studentCounts[p.student_tr] = (studentCounts[p.student_tr] || 0) + 1;
         }
       }
       const topStudentIds = Object.entries(studentCounts)

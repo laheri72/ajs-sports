@@ -22,7 +22,7 @@ export interface Club {
 export interface ClubMember {
   id: string;
   club_id: string;
-  student_id: string;
+  student_tr: string;
   role: string;
   status: string;
   joined_at: string;
@@ -119,7 +119,7 @@ export function useClubMembers(clubId: string | null) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("club_members")
-        .select("*, profiles:student_id(full_name, class_name, darajah, house_id, houses:house_id(name, color))")
+        .select("*, profiles:student_tr(full_name, class_name, darajah, house_id, houses:house_id(name, color))")
         .eq("club_id", clubId!)
         .eq("status", "active" as any)
         .order("joined_at");
@@ -157,7 +157,7 @@ export function useMyMembership(clubId: string | null) {
         .from("club_members")
         .select("*")
         .eq("club_id", clubId!)
-        .eq("student_id", profile!.tr_number)
+        .eq("student_tr", profile!.tr_number)
         .eq("status", "active" as any)
         .maybeSingle();
       if (error) throw error;
@@ -175,7 +175,7 @@ export function useJoinClub() {
       if (!profile) throw new Error("No profile");
       const { error } = await supabase.from("club_members").insert({
         club_id: clubId,
-        student_id: profile.tr_number,
+        student_tr: profile.tr_number,
         role: "member" as any,
         status: "active" as any,
       });
@@ -203,7 +203,7 @@ export function useLeaveClub() {
         .from("club_members")
         .delete()
         .eq("club_id", clubId)
-        .eq("student_id", profile.tr_number);
+        .eq("student_tr", profile.tr_number);
       if (error) throw error;
     },
     onSuccess: () => {

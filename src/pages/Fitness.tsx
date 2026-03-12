@@ -45,7 +45,7 @@ export default function Fitness() {
       const { data: parts } = await supabase
         .from("participations")
         .select("id, event_id, events(name, sports(name))")
-        .eq("student_id", profile!.tr_number);
+        .eq("student_tr", profile!.tr_number);
 
       // Get results for those participations
       const partIds = (parts || []).map((p) => p.id);

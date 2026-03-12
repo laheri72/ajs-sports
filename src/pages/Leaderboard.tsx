@@ -137,7 +137,7 @@ export default function Leaderboard() {
                     const isUser = s.user_id === user?.id;
                     return (
                       <tr
-                        key={s.student_id}
+                        key={s.student_tr}
                         className={`border-b border-border/50 transition-colors ${isUser ? "bg-primary/5 border-l-2 border-l-primary" : "hover:bg-secondary/30"}`}
                       >
                         <td className="px-5 py-3">{rankIcon(idx + 1)}</td>

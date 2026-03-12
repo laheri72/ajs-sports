@@ -61,7 +61,7 @@ export type Database = {
           score_snapshot: number
           sport_id: string
           status: Database["public"]["Enums"]["certification_status"]
-          student_id: string
+          student_tr: string
           valid_year: number
         }
         Insert: {
@@ -75,7 +75,7 @@ export type Database = {
           score_snapshot?: number
           sport_id: string
           status?: Database["public"]["Enums"]["certification_status"]
-          student_id: string
+          student_tr: string
           valid_year: number
         }
         Update: {
@@ -89,7 +89,7 @@ export type Database = {
           score_snapshot?: number
           sport_id?: string
           status?: Database["public"]["Enums"]["certification_status"]
-          student_id?: string
+          student_tr?: string
           valid_year?: number
         }
         Relationships: [
@@ -108,8 +108,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "certifications_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "certifications_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -122,21 +122,21 @@ export type Database = {
           id: string
           joined_at: string
           status: Database["public"]["Enums"]["club_event_participant_status"]
-          student_id: string
+          student_tr: string
         }
         Insert: {
           club_event_id: string
           id?: string
           joined_at?: string
           status?: Database["public"]["Enums"]["club_event_participant_status"]
-          student_id: string
+          student_tr: string
         }
         Update: {
           club_event_id?: string
           id?: string
           joined_at?: string
           status?: Database["public"]["Enums"]["club_event_participant_status"]
-          student_id?: string
+          student_tr?: string
         }
         Relationships: [
           {
@@ -147,8 +147,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "club_event_participants_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "club_event_participants_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -216,7 +216,7 @@ export type Database = {
           joined_at: string
           role: Database["public"]["Enums"]["club_member_role"]
           status: Database["public"]["Enums"]["club_member_status"]
-          student_id: string
+          student_tr: string
         }
         Insert: {
           club_id: string
@@ -224,7 +224,7 @@ export type Database = {
           joined_at?: string
           role?: Database["public"]["Enums"]["club_member_role"]
           status?: Database["public"]["Enums"]["club_member_status"]
-          student_id: string
+          student_tr: string
         }
         Update: {
           club_id?: string
@@ -232,7 +232,7 @@ export type Database = {
           joined_at?: string
           role?: Database["public"]["Enums"]["club_member_role"]
           status?: Database["public"]["Enums"]["club_member_status"]
-          student_id?: string
+          student_tr?: string
         }
         Relationships: [
           {
@@ -243,8 +243,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "club_members_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "club_members_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -502,19 +502,19 @@ export type Database = {
           id: string
           joined_at: string
           request_id: string
-          student_id: string
+          student_tr: string
         }
         Insert: {
           id?: string
           joined_at?: string
           request_id: string
-          student_id: string
+          student_tr: string
         }
         Update: {
           id?: string
           joined_at?: string
           request_id?: string
-          student_id?: string
+          student_tr?: string
         }
         Relationships: [
           {
@@ -525,8 +525,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "match_request_players_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "match_request_players_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -979,7 +979,7 @@ export type Database = {
           id: string
           skill_rating: number
           sport_id: string
-          student_id: string
+          student_tr: string
           years_of_practice: number
         }
         Insert: {
@@ -988,7 +988,7 @@ export type Database = {
           id?: string
           skill_rating: number
           sport_id: string
-          student_id: string
+          student_tr: string
           years_of_practice?: number
         }
         Update: {
@@ -997,7 +997,7 @@ export type Database = {
           id?: string
           skill_rating?: number
           sport_id?: string
-          student_id?: string
+          student_tr?: string
           years_of_practice?: number
         }
         Relationships: [
@@ -1009,8 +1009,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "sport_self_assessments_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "sport_self_assessments_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -1051,7 +1051,7 @@ export type Database = {
           is_identified_talent: boolean
           notes: string | null
           sport_id: string
-          student_id: string
+          student_tr: string
           updated_at: string
         }
         Insert: {
@@ -1063,7 +1063,7 @@ export type Database = {
           is_identified_talent?: boolean
           notes?: string | null
           sport_id: string
-          student_id: string
+          student_tr: string
           updated_at?: string
         }
         Update: {
@@ -1075,7 +1075,7 @@ export type Database = {
           is_identified_talent?: boolean
           notes?: string | null
           sport_id?: string
-          student_id?: string
+          student_tr?: string
           updated_at?: string
         }
         Relationships: [
@@ -1087,8 +1087,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "sports_interests_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "sports_interests_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -1154,7 +1154,7 @@ export type Database = {
           rank: number
           season_id: string
           sport_id: string
-          student_id: string
+          student_tr: string
         }
         Insert: {
           category: string
@@ -1168,7 +1168,7 @@ export type Database = {
           rank: number
           season_id: string
           sport_id: string
-          student_id: string
+          student_tr: string
         }
         Update: {
           category?: string
@@ -1182,7 +1182,7 @@ export type Database = {
           rank?: number
           season_id?: string
           sport_id?: string
-          student_id?: string
+          student_tr?: string
         }
         Relationships: [
           {
@@ -1214,8 +1214,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "student_selections_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "student_selections_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -1229,7 +1229,7 @@ export type Database = {
           level: Database["public"]["Enums"]["proficiency_level"]
           source: string
           sport_id: string
-          student_id: string
+          student_tr: string
           updated_at: string
         }
         Insert: {
@@ -1238,7 +1238,7 @@ export type Database = {
           level?: Database["public"]["Enums"]["proficiency_level"]
           source?: string
           sport_id: string
-          student_id: string
+          student_tr: string
           updated_at?: string
         }
         Update: {
@@ -1247,7 +1247,7 @@ export type Database = {
           level?: Database["public"]["Enums"]["proficiency_level"]
           source?: string
           sport_id?: string
-          student_id?: string
+          student_tr?: string
           updated_at?: string
         }
         Relationships: [
@@ -1259,8 +1259,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "student_sport_proficiencies_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "student_sport_proficiencies_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -1277,7 +1277,7 @@ export type Database = {
           last_calculated: string
           proficiency_level: Database["public"]["Enums"]["proficiency_level"]
           sport_id: string
-          student_id: string
+          student_tr: string
           total_score: number
         }
         Insert: {
@@ -1289,7 +1289,7 @@ export type Database = {
           last_calculated?: string
           proficiency_level?: Database["public"]["Enums"]["proficiency_level"]
           sport_id: string
-          student_id: string
+          student_tr: string
           total_score?: number
         }
         Update: {
@@ -1301,7 +1301,7 @@ export type Database = {
           last_calculated?: string
           proficiency_level?: Database["public"]["Enums"]["proficiency_level"]
           sport_id?: string
-          student_id?: string
+          student_tr?: string
           total_score?: number
         }
         Relationships: [
@@ -1314,7 +1314,7 @@ export type Database = {
           },
           {
             foreignKeyName: "fk_student_sport_scores_student"
-            columns: ["student_id"]
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -1632,7 +1632,7 @@ export type Database = {
           participations: number | null
           placements: number | null
           season_id: string | null
-          student_id: string | null
+          student_tr: string | null
           student_name: string | null
           total_points: number | null
           user_id: string | null
@@ -1646,8 +1646,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "point_transactions_student_id_fkey"
-            columns: ["student_id"]
+            foreignKeyName: "point_transactions_student_tr_fkey"
+            columns: ["student_tr"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["tr_number"]
@@ -1664,7 +1664,7 @@ export type Database = {
     }
     Functions: {
       calculate_student_sport_score: {
-        Args: { p_sport_id: string; p_student_id: string }
+        Args: { p_sport_id: string; p_student_tr: string }
         Returns: undefined
       }
       generate_certificate_number: { Args: { p_year: number }; Returns: string }
