@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 interface HouseMember {
-  tr_number: string;
+  tr_number: number;
   user_id: string;
   full_name: string | null;
   house_id: string | null;

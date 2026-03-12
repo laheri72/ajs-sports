@@ -8,9 +8,9 @@ export interface Club {
   sport_id: string;
   name: string;
   description: string | null;
-  incharge_id: string | null;
-  sub_incharge_id: string | null;
-  created_by: string | null;
+  incharge_id: number | null;
+  sub_incharge_id: number | null;
+  created_by: number | null;
   is_active: boolean;
   created_at: string;
   sports?: { name: string; sport_type: string };
@@ -22,7 +22,7 @@ export interface Club {
 export interface ClubMember {
   id: string;
   club_id: string;
-  student_tr: string;
+  student_tr: number;
   role: string;
   status: string;
   joined_at: string;
@@ -220,7 +220,7 @@ export function useLeaveClub() {
 export function useCreateClub() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (params: { name: string; sport_id: string; description?: string; incharge_id?: string; sub_incharge_id?: string; created_by?: string }) => {
+    mutationFn: async (params: { name: string; sport_id: string; description?: string; incharge_id?: number; sub_incharge_id?: number; created_by?: number }) => {
       const { error } = await supabase.from("clubs").insert(params);
       if (error) throw error;
     },
@@ -255,7 +255,7 @@ export function useUpdateClub() {
 export function useCreateClubEvent() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (params: { club_id: string; title: string; event_type: string; description?: string; event_date?: string; location?: string; max_participants?: number; created_by?: string }) => {
+    mutationFn: async (params: { club_id: string; title: string; event_type: string; description?: string; event_date?: string; location?: string; max_participants?: number; created_by?: number }) => {
       const { error } = await supabase.from("club_events").insert(params as any);
       if (error) throw error;
     },

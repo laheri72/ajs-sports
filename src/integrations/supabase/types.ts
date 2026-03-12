@@ -20,7 +20,7 @@ export type Database = {
           earned_at: string | null
           icon: string | null
           id: string
-          student_tr: string
+          student_tr: number
           title: string
         }
         Insert: {
@@ -28,7 +28,7 @@ export type Database = {
           earned_at?: string | null
           icon?: string | null
           id?: string
-          student_tr: string
+          student_tr: number
           title: string
         }
         Update: {
@@ -36,7 +36,7 @@ export type Database = {
           earned_at?: string | null
           icon?: string | null
           id?: string
-          student_tr?: string
+          student_tr?: number
           title?: string
         }
         Relationships: [
@@ -61,7 +61,7 @@ export type Database = {
           score_snapshot: number
           sport_id: string
           status: Database["public"]["Enums"]["certification_status"]
-          student_tr: string
+          student_tr: number
           valid_year: number
         }
         Insert: {
@@ -75,7 +75,7 @@ export type Database = {
           score_snapshot?: number
           sport_id: string
           status?: Database["public"]["Enums"]["certification_status"]
-          student_tr: string
+          student_tr: number
           valid_year: number
         }
         Update: {
@@ -89,7 +89,7 @@ export type Database = {
           score_snapshot?: number
           sport_id?: string
           status?: Database["public"]["Enums"]["certification_status"]
-          student_tr?: string
+          student_tr?: number
           valid_year?: number
         }
         Relationships: [
@@ -122,21 +122,21 @@ export type Database = {
           id: string
           joined_at: string
           status: Database["public"]["Enums"]["club_event_participant_status"]
-          student_tr: string
+          student_tr: number
         }
         Insert: {
           club_event_id: string
           id?: string
           joined_at?: string
           status?: Database["public"]["Enums"]["club_event_participant_status"]
-          student_tr: string
+          student_tr: number
         }
         Update: {
           club_event_id?: string
           id?: string
           joined_at?: string
           status?: Database["public"]["Enums"]["club_event_participant_status"]
-          student_tr?: string
+          student_tr?: number
         }
         Relationships: [
           {
@@ -216,7 +216,7 @@ export type Database = {
           joined_at: string
           role: Database["public"]["Enums"]["club_member_role"]
           status: Database["public"]["Enums"]["club_member_status"]
-          student_tr: string
+          student_tr: number
         }
         Insert: {
           club_id: string
@@ -224,7 +224,7 @@ export type Database = {
           joined_at?: string
           role?: Database["public"]["Enums"]["club_member_role"]
           status?: Database["public"]["Enums"]["club_member_status"]
-          student_tr: string
+          student_tr: number
         }
         Update: {
           club_id?: string
@@ -232,7 +232,7 @@ export type Database = {
           joined_at?: string
           role?: Database["public"]["Enums"]["club_member_role"]
           status?: Database["public"]["Enums"]["club_member_status"]
-          student_tr?: string
+          student_tr?: number
         }
         Relationships: [
           {
@@ -415,7 +415,7 @@ export type Database = {
           logged_at: string | null
           speed: number | null
           strength: number | null
-          student_tr: string
+          student_tr: number
         }
         Insert: {
           agility?: number | null
@@ -425,7 +425,7 @@ export type Database = {
           logged_at?: string | null
           speed?: number | null
           strength?: number | null
-          student_tr: string
+          student_tr: number
         }
         Update: {
           agility?: number | null
@@ -435,7 +435,7 @@ export type Database = {
           logged_at?: string | null
           speed?: number | null
           strength?: number | null
-          student_tr?: string
+          student_tr?: number
         }
         Relationships: [
           {
@@ -502,19 +502,19 @@ export type Database = {
           id: string
           joined_at: string
           request_id: string
-          student_tr: string
+          student_tr: number
         }
         Insert: {
           id?: string
           joined_at?: string
           request_id: string
-          student_tr: string
+          student_tr: number
         }
         Update: {
           id?: string
           joined_at?: string
           request_id?: string
-          student_tr?: string
+          student_tr?: number
         }
         Relationships: [
           {
@@ -687,7 +687,7 @@ export type Database = {
           registered_at: string | null
           season_id: string
           status: Database["public"]["Enums"]["participation_status"] | null
-          student_tr: string | null
+          student_tr: number | null
           team_id: string | null
         }
         Insert: {
@@ -699,7 +699,7 @@ export type Database = {
           registered_at?: string | null
           season_id: string
           status?: Database["public"]["Enums"]["participation_status"] | null
-          student_tr?: string | null
+          student_tr?: number | null
           team_id?: string | null
         }
         Update: {
@@ -711,7 +711,7 @@ export type Database = {
           registered_at?: string | null
           season_id?: string
           status?: Database["public"]["Enums"]["participation_status"] | null
-          student_tr?: string | null
+          student_tr?: number | null
           team_id?: string | null
         }
         Relationships: [
@@ -769,7 +769,7 @@ export type Database = {
           points: number
           season_id: string
           source: Database["public"]["Enums"]["point_source"]
-          student_tr: string | null
+          student_tr: number | null
         }
         Insert: {
           created_at?: string | null
@@ -780,7 +780,7 @@ export type Database = {
           points: number
           season_id: string
           source: Database["public"]["Enums"]["point_source"]
-          student_tr?: string | null
+          student_tr?: number | null
         }
         Update: {
           created_at?: string | null
@@ -791,7 +791,7 @@ export type Database = {
           points?: number
           season_id?: string
           source?: Database["public"]["Enums"]["point_source"]
-          student_tr?: string | null
+          student_tr?: number | null
         }
         Relationships: [
           {
@@ -838,7 +838,7 @@ export type Database = {
           house_id: string | null
           is_under_18: boolean | null
           its_number: string | null
-          tr_number: string
+          tr_number: number
           updated_at: string | null
           user_id: string
         }
@@ -855,7 +855,7 @@ export type Database = {
           house_id?: string | null
           is_under_18?: boolean | null
           its_number?: string | null
-          tr_number: string
+          tr_number: number
           updated_at?: string | null
           user_id: string
         }
@@ -872,7 +872,7 @@ export type Database = {
           house_id?: string | null
           is_under_18?: boolean | null
           its_number?: string | null
-          tr_number?: string
+          tr_number?: number
           updated_at?: string | null
           user_id?: string
         }
@@ -979,7 +979,7 @@ export type Database = {
           id: string
           skill_rating: number
           sport_id: string
-          student_tr: string
+          student_tr: number
           years_of_practice: number
         }
         Insert: {
@@ -988,7 +988,7 @@ export type Database = {
           id?: string
           skill_rating: number
           sport_id: string
-          student_tr: string
+          student_tr: number
           years_of_practice?: number
         }
         Update: {
@@ -997,7 +997,7 @@ export type Database = {
           id?: string
           skill_rating?: number
           sport_id?: string
-          student_tr?: string
+          student_tr?: number
           years_of_practice?: number
         }
         Relationships: [
@@ -1051,7 +1051,7 @@ export type Database = {
           is_identified_talent: boolean
           notes: string | null
           sport_id: string
-          student_tr: string
+          student_tr: number
           updated_at: string
         }
         Insert: {
@@ -1063,7 +1063,7 @@ export type Database = {
           is_identified_talent?: boolean
           notes?: string | null
           sport_id: string
-          student_tr: string
+          student_tr: number
           updated_at?: string
         }
         Update: {
@@ -1075,7 +1075,7 @@ export type Database = {
           is_identified_talent?: boolean
           notes?: string | null
           sport_id?: string
-          student_tr?: string
+          student_tr?: number
           updated_at?: string
         }
         Relationships: [
@@ -1101,21 +1101,21 @@ export type Database = {
           id: string
           role: Database["public"]["Enums"]["event_role"]
           season_id: string
-          student_tr: string
+          student_tr: number
         }
         Insert: {
           event_id: string
           id?: string
           role: Database["public"]["Enums"]["event_role"]
           season_id: string
-          student_tr: string
+          student_tr: number
         }
         Update: {
           event_id?: string
           id?: string
           role?: Database["public"]["Enums"]["event_role"]
           season_id?: string
-          student_tr?: string
+          student_tr?: number
         }
         Relationships: [
           {
@@ -1154,7 +1154,7 @@ export type Database = {
           rank: number
           season_id: string
           sport_id: string
-          student_tr: string
+          student_tr: number
         }
         Insert: {
           category: string
@@ -1168,7 +1168,7 @@ export type Database = {
           rank: number
           season_id: string
           sport_id: string
-          student_tr: string
+          student_tr: number
         }
         Update: {
           category?: string
@@ -1182,7 +1182,7 @@ export type Database = {
           rank?: number
           season_id?: string
           sport_id?: string
-          student_tr?: string
+          student_tr?: number
         }
         Relationships: [
           {
@@ -1229,7 +1229,7 @@ export type Database = {
           level: Database["public"]["Enums"]["proficiency_level"]
           source: string
           sport_id: string
-          student_tr: string
+          student_tr: number
           updated_at: string
         }
         Insert: {
@@ -1238,7 +1238,7 @@ export type Database = {
           level?: Database["public"]["Enums"]["proficiency_level"]
           source?: string
           sport_id: string
-          student_tr: string
+          student_tr: number
           updated_at?: string
         }
         Update: {
@@ -1247,7 +1247,7 @@ export type Database = {
           level?: Database["public"]["Enums"]["proficiency_level"]
           source?: string
           sport_id?: string
-          student_tr?: string
+          student_tr?: number
           updated_at?: string
         }
         Relationships: [
@@ -1277,7 +1277,7 @@ export type Database = {
           last_calculated: string
           proficiency_level: Database["public"]["Enums"]["proficiency_level"]
           sport_id: string
-          student_tr: string
+          student_tr: number
           total_score: number
         }
         Insert: {
@@ -1289,7 +1289,7 @@ export type Database = {
           last_calculated?: string
           proficiency_level?: Database["public"]["Enums"]["proficiency_level"]
           sport_id: string
-          student_tr: string
+          student_tr: number
           total_score?: number
         }
         Update: {
@@ -1301,7 +1301,7 @@ export type Database = {
           last_calculated?: string
           proficiency_level?: Database["public"]["Enums"]["proficiency_level"]
           sport_id?: string
-          student_tr?: string
+          student_tr?: number
           total_score?: number
         }
         Relationships: [
@@ -1325,19 +1325,19 @@ export type Database = {
         Row: {
           id: string
           role: Database["public"]["Enums"]["event_role"] | null
-          student_tr: string
+          student_tr: number
           team_id: string
         }
         Insert: {
           id?: string
           role?: Database["public"]["Enums"]["event_role"] | null
-          student_tr: string
+          student_tr: number
           team_id: string
         }
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["event_role"] | null
-          student_tr?: string
+          student_tr?: number
           team_id?: string
         }
         Relationships: [
@@ -1473,19 +1473,19 @@ export type Database = {
         Row: {
           attended_at: string | null
           id: string
-          student_tr: string
+          student_tr: number
           training_id: string
         }
         Insert: {
           attended_at?: string | null
           id?: string
-          student_tr: string
+          student_tr: number
           training_id: string
         }
         Update: {
           attended_at?: string | null
           id?: string
-          student_tr?: string
+          student_tr?: number
           training_id?: string
         }
         Relationships: [
@@ -1632,7 +1632,7 @@ export type Database = {
           participations: number | null
           placements: number | null
           season_id: string | null
-          student_tr: string | null
+          student_tr: number | null
           student_name: string | null
           total_points: number | null
           user_id: string | null
@@ -1664,7 +1664,7 @@ export type Database = {
     }
     Functions: {
       calculate_student_sport_score: {
-        Args: { p_sport_id: string; p_student_tr: string }
+        Args: { p_sport_id: string; p_student_tr: number }
         Returns: undefined
       }
       generate_certificate_number: { Args: { p_year: number }; Returns: string }

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 export interface MatchRequest {
   id: string;
   sport_id: string;
-  created_by: string;
+  created_by: number;
   title: string;
   description: string | null;
   event_date: string | null;

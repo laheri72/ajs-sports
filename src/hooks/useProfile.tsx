@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
 export interface Profile {
-  tr_number: string;
+  tr_number: number;
   user_id: string;
   full_name: string | null;
   house_id: string | null;

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export interface Certification {
   id: string;
-  student_tr: string;
+  student_tr: number;
   sport_id: string;
   score_snapshot: number;
   proficiency_level: string;
@@ -17,7 +17,7 @@ export interface Certification {
   notes: string | null;
   status: "draft" | "issued" | "revoked";
   created_at: string;
-  profiles?: { full_name: string | null; class_name: string | null; darajah: string | null; tr_number: string | null };
+  profiles?: { full_name: string | null; class_name: string | null; darajah: string | null; tr_number: number | null };
   sports?: { name: string; sport_type: string };
   issuer?: { full_name: string | null };
 }
@@ -80,7 +80,7 @@ export function useIssueCertificate() {
 
   return useMutation({
     mutationFn: async ({ studentId, sportId, score, level, year, notes }: {
-      studentId: string; sportId: string; score: number; level: string; year: number; notes?: string;
+      studentId: number; sportId: string; score: number; level: string; year: number; notes?: string;
     }) => {
       // Generate certificate number
       const { data: certNum, error: numErr } = await supabase.rpc("generate_certificate_number", { p_year: year });

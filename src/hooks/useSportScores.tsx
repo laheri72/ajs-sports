@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 export interface StudentSportScore {
   id: string;
-  student_tr: string;
+  student_tr: number;
   sport_id: string;
   competition_score: number;
   club_score: number;
@@ -17,7 +17,7 @@ export interface StudentSportScore {
     full_name: string | null;
     class_name: string | null;
     darajah: string | null;
-    tr_number: string | null;
+    tr_number: number | null;
     house_id: string | null;
     houses?: { name: string; color: string } | null;
   };
