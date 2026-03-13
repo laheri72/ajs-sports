@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading, isRegistered } = useAuth();
 
-  if (loading || isRegistered === null) {
+  if (loading || (user && isRegistered === null)) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
