@@ -25,31 +25,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
 
   const checkRegistration = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("tr_number")
-      .eq("user_id", userId)
-      .maybeSingle();
-    setIsRegistered(!!data);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("tr_number")
+        .eq("user_id", userId)
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Error checking registration:", error);
+        setIsRegistered(false);
+      } else {
+        setIsRegistered(!!data);
+      }
+    } catch (err) {
+      console.error("Unexpected error checking registration:", err);
+      setIsRegistered(false);
+    }
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        checkRegistration(session.user.id).then(() => setLoading(false));
-      } else {
-        setIsRegistered(null);
+    const initAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Error getting session:", error);
+        }
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          await checkRegistration(session.user.id);
+        } else {
+          setIsRegistered(null);
+        }
+      } catch (err) {
+        console.error("Unexpected error in initAuth:", err);
+      } finally {
         setLoading(false);
       }
-    });
+    };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    initAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
       if (session?.user) {
-        checkRegistration(session.user.id).then(() => setLoading(false));
+        setLoading(true);
+        await checkRegistration(session.user.id);
+        setLoading(false);
       } else {
         setIsRegistered(null);
         setLoading(false);
