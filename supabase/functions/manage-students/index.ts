@@ -39,10 +39,23 @@ serve(async (req: Request) => {
     }
 
     // Check admin role
+    const { data: adminProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("tr_number")
+      .eq("user_id", caller.id)
+      .maybeSingle();
+
+    if (!adminProfile) {
+       return new Response(JSON.stringify({ error: "Forbidden: profile missing" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { data: roleData } = await supabaseAdmin
       .from("user_roles")
       .select("role")
-      .eq("user_id", caller.id)
+      .eq("student_tr", adminProfile.tr_number)
       .eq("role", "admin");
     if (!roleData || roleData.length === 0) {
       return new Response(JSON.stringify({ error: "Forbidden: admin only" }), {
@@ -117,7 +130,7 @@ serve(async (req: Request) => {
           // Ensure student role exists
           await supabaseAdmin
             .from("user_roles")
-            .upsert({ user_id: authData.user.id, role: "student" }, { onConflict: "user_id,role" });
+            .upsert({ student_tr: profilePayload.tr_number, role: "student" }, { onConflict: "student_tr,role" });
 
           results.push({ success: true, edu_email: student.edu_email });
         } catch (e: any) {

@@ -1548,19 +1548,27 @@ export type Database = {
         Row: {
           id: string
           role: Database["public"]["Enums"]["app_role"]
-          user_id: string
+          student_tr: number
         }
         Insert: {
           id?: string
           role: Database["public"]["Enums"]["app_role"]
-          user_id: string
+          student_tr: number
         }
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
+          student_tr?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_student_tr_fkey"
+            columns: ["student_tr"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["tr_number"]
+          },
+        ]
       }
       wildcard_programs: {
         Row: {

@@ -9,10 +9,20 @@ export function useUserRole() {
     queryKey: ["user-role", user?.id],
     enabled: !!user,
     queryFn: async () => {
+      // First get the student_tr for this user_id
+      const { data: profile, error: pErr } = await supabase
+        .from("profiles")
+        .select("tr_number")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      
+      if (pErr) throw pErr;
+      if (!profile) return [];
+
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", user!.id);
+        .eq("student_tr", profile.tr_number);
       if (error) throw error;
       return data.map((r) => r.role);
     },

@@ -36,10 +36,23 @@ serve(async (req) => {
     }
 
     // Check admin role
+    const { data: adminProfile } = await supabase
+      .from("profiles")
+      .select("tr_number")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!adminProfile) {
+       return new Response(JSON.stringify({ error: "Forbidden: profile missing" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { data: roles } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", user.id)
+      .eq("student_tr", adminProfile.tr_number)
       .eq("role", "admin");
 
     if (!roles || roles.length === 0) {

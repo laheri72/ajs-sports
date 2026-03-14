@@ -14,19 +14,19 @@ export function useHouseRoles(houseId: string | null) {
         .eq("house_id", houseId!);
       if (pErr) throw pErr;
 
-      const userIds = profiles.map((p) => p.user_id);
-      if (!userIds.length) return [];
+      const trNumbers = profiles.map((p) => p.tr_number);
+      if (!trNumbers.length) return [];
 
       const { data: roles, error: rErr } = await supabase
         .from("user_roles")
-        .select("user_id, role")
-        .in("user_id", userIds)
+        .select("student_tr, role")
+        .in("student_tr", trNumbers)
         .in("role", ["captain", "co_captain"]);
       if (rErr) throw rErr;
 
       return profiles.map((p) => ({
         ...p,
-        roles: roles.filter((r) => r.user_id === p.user_id).map((r) => r.role),
+        roles: roles.filter((r: any) => r.student_tr === p.tr_number).map((r: any) => r.role),
       }));
     },
   });
@@ -37,20 +37,21 @@ export function useAssignRole() {
 
   return useMutation({
     mutationFn: async ({
-      userId,
+      trNumber,
       role,
     }: {
-      userId: string;
+      trNumber: string;
       role: "captain" | "co_captain";
     }) => {
       const { error } = await supabase
         .from("user_roles")
-        .insert({ user_id: userId, role })
+        .insert({ student_tr: trNumber, role } as any)
         .select();
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["house-roles"] });
+      queryClient.invalidateQueries({ queryKey: ["house-members-roles"] });
       toast({ title: "Role assigned" });
     },
     onError: (err: any) => {
@@ -64,21 +65,22 @@ export function useRemoveRole() {
 
   return useMutation({
     mutationFn: async ({
-      userId,
+      trNumber,
       role,
     }: {
-      userId: string;
+      trNumber: string;
       role: "captain" | "co_captain";
     }) => {
       const { error } = await supabase
         .from("user_roles")
         .delete()
-        .eq("user_id", userId)
+        .eq("student_tr", trNumber)
         .eq("role", role);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["house-roles"] });
+      queryClient.invalidateQueries({ queryKey: ["house-members-roles"] });
       toast({ title: "Role removed" });
     },
     onError: (err: any) => {

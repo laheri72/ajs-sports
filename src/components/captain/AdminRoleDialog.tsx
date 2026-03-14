@@ -40,19 +40,19 @@ export default function AdminRoleDialog({ open, onOpenChange }: Props) {
         .order("full_name");
       if (pErr) throw pErr;
 
-      const userIds = profiles.map((p) => p.user_id);
-      if (!userIds.length) return [];
+      const trNumbers = profiles.map((p) => p.tr_number);
+      if (!trNumbers.length) return [];
 
       const { data: roles, error: rErr } = await supabase
         .from("user_roles")
-        .select("user_id, role")
-        .in("user_id", userIds)
+        .select("student_tr, role")
+        .in("student_tr", trNumbers)
         .in("role", ["captain", "co_captain"]);
       if (rErr) throw rErr;
 
       return profiles.map((p) => ({
         ...p,
-        roles: roles.filter((r) => r.user_id === p.user_id).map((r) => r.role) as string[],
+        roles: roles.filter((r: any) => r.student_tr === p.tr_number).map((r: any) => r.role) as string[],
       }));
     },
   });
@@ -60,11 +60,11 @@ export default function AdminRoleDialog({ open, onOpenChange }: Props) {
   const assignRole = useAssignRole();
   const removeRole = useRemoveRole();
 
-  const handleToggle = (userId: string, role: "captain" | "co_captain", hasRole: boolean) => {
+  const handleToggle = (trNumber: string, role: "captain" | "co_captain", hasRole: boolean) => {
     if (hasRole) {
-      removeRole.mutate({ userId, role });
+      removeRole.mutate({ trNumber, role });
     } else {
-      assignRole.mutate({ userId, role });
+      assignRole.mutate({ trNumber, role });
     }
   };
 
@@ -127,7 +127,7 @@ export default function AdminRoleDialog({ open, onOpenChange }: Props) {
                           <Button
                             size="sm"
                             variant={isCaptain ? "default" : "outline"}
-                            onClick={() => handleToggle(m.user_id, "captain", isCaptain)}
+                            onClick={() => handleToggle(m.tr_number, "captain", isCaptain)}
                             disabled={assignRole.isPending || removeRole.isPending}
                           >
                             {isCaptain ? "Remove" : "Assign"}
@@ -137,12 +137,13 @@ export default function AdminRoleDialog({ open, onOpenChange }: Props) {
                           <Button
                             size="sm"
                             variant={isCoCaptain ? "default" : "outline"}
-                            onClick={() => handleToggle(m.user_id, "co_captain", isCoCaptain)}
+                            onClick={() => handleToggle(m.tr_number, "co_captain", isCoCaptain)}
                             disabled={assignRole.isPending || removeRole.isPending}
                           >
                             {isCoCaptain ? "Remove" : "Assign"}
                           </Button>
                         </TableCell>
+
                       </TableRow>
                     );
                   })
