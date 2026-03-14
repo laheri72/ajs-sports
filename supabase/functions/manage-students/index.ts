@@ -26,11 +26,19 @@ serve(async (req: Request) => {
       });
     }
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user: caller }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    // Create a client with the caller's token to verify their identity
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
+    const supabaseClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    
+    const { data: { user: caller }, error: authError } = await supabaseClient.auth.getUser();
     
     if (authError || !caller) {
-      return new Response(JSON.stringify({ error: "Invalid token or unauthorized" }), {
+      return new Response(JSON.stringify({ 
+        error: "Invalid token or unauthorized", 
+        detail: authError?.message || "User not found" 
+      }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -44,7 +52,11 @@ serve(async (req: Request) => {
       .maybeSingle();
 
     if (profileError || !adminProfile) {
-       return new Response(JSON.stringify({ error: "Forbidden: profile missing or error", detail: profileError }), {
+       return new Response(JSON.stringify({ 
+         error: "Forbidden: profile missing or error", 
+         detail: profileError?.message || "Profile not found for caller",
+         caller_id: caller.id
+       }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

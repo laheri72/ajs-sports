@@ -224,8 +224,8 @@ export default function AdminStudents() {
       const cols = line.split(",").map((c) => c.trim());
       const houseName = cols[6] || "";
       const hizbName = cols[3] || "";
-      const house = houses?.find((h) => h.name.toLowerCase() === houseName.toLowerCase());
-      const hizb = hizbTeams?.find((h) => h.name.toLowerCase() === hizbName.toLowerCase());
+      const house = houses?.find((h) => (h.name || "").toLowerCase() === houseName.toLowerCase());
+      const hizb = hizbTeams?.find((h) => (h.name || "").toLowerCase() === hizbName.toLowerCase());
       return {
         tr_number: cols[0] || "",
         its_number: cols[1] || "",
@@ -251,10 +251,10 @@ export default function AdminStudents() {
     if (!search) return true;
     const q = search.toLowerCase();
     return (
-      s.full_name?.toLowerCase().includes(q) ||
-      s.tr_number?.toLowerCase().includes(q) ||
-      s.edu_email?.toLowerCase().includes(q) ||
-      s.its_number?.toLowerCase().includes(q)
+      String(s.full_name || "").toLowerCase().includes(q) ||
+      String(s.tr_number || "").toLowerCase().includes(q) ||
+      String(s.edu_email || "").toLowerCase().includes(q) ||
+      String(s.its_number || "").toLowerCase().includes(q)
     );
   });
 
