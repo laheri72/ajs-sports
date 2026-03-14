@@ -60,7 +60,7 @@ export default function CaptainSelection() {
     if (existingSelections) {
       const map: Record<number, string | null> = {};
       existingSelections.forEach((s) => {
-        map[s.rank] = s.student_tr;
+        map[s.rank] = s.student_tr ? String(s.student_tr) : null;
       });
       setDraftSlots(map);
     } else {
@@ -295,7 +295,7 @@ export default function CaptainSelection() {
               ) : (
                 Array.from({ length: slotCount }, (_, i) => i + 1).map((rank) => {
                   const selectedId = draftSlots[rank] ?? null;
-                  const student = students?.find((s) => s.id === selectedId);
+                  const student = students?.find((s) => String(s.tr_number) === selectedId);
 
                   return (
                     <TableRow key={rank}>
@@ -314,9 +314,10 @@ export default function CaptainSelection() {
                             <SelectContent>
                               <SelectItem value="empty">— Empty —</SelectItem>
                               {students?.map((s) => {
-                                const taken = assignedStudentIds.has(s.id) && s.id !== selectedId;
+                                const val = String(s.tr_number);
+                                const taken = assignedStudentIds.has(val) && val !== selectedId;
                                 return (
-                                  <SelectItem key={s.id} value={s.id} disabled={taken}>
+                                  <SelectItem key={val} value={val} disabled={taken}>
                                     {s.full_name || "Unnamed"} {taken ? "(assigned)" : ""}
                                   </SelectItem>
                                 );
