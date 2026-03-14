@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -247,20 +247,27 @@ export default function AdminStudents() {
     createMutation.mutate(bulkStudents);
   };
 
-  const filteredStudents = students?.filter((s) => {
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return (
-      String(s.full_name || "").toLowerCase().includes(q) ||
-      String(s.tr_number || "").toLowerCase().includes(q) ||
-      String(s.edu_email || "").toLowerCase().includes(q) ||
-      String(s.its_number || "").toLowerCase().includes(q)
-    );
-  });
+  const filteredStudents = useMemo(() => {
+    if (!students || !Array.isArray(students)) return [];
+    if (!search.trim()) return students;
+    
+    const q = search.toLowerCase().trim();
+    return students.filter((s) => {
+      return (
+        String(s.full_name || "").toLowerCase().includes(q) ||
+        String(s.tr_number || "").toLowerCase().includes(q) ||
+        String(s.edu_email || "").toLowerCase().includes(q) ||
+        String(s.its_number || "").toLowerCase().includes(q)
+      );
+    });
+  }, [students, search]);
 
-  const filteredHizb = form.house_id
-    ? hizbTeams?.filter((h) => h.house_id === form.house_id)
-    : hizbTeams;
+  const filteredHizb = useMemo(() => {
+    if (!hizbTeams) return [];
+    return form.house_id
+      ? hizbTeams.filter((h: any) => h.house_id === form.house_id)
+      : hizbTeams;
+  }, [hizbTeams, form.house_id]);
 
   return (
     <div className="space-y-6">
