@@ -78,6 +78,9 @@ export default function AdminStudents() {
     mutationFn: async (studentData: StudentForm[]) => {
       const { data: { session } } = await supabase.auth.getSession();
       const res = await supabase.functions.invoke("manage-students", {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
         body: {
           action: "create",
           students: studentData.map((s) => ({
@@ -121,7 +124,11 @@ export default function AdminStudents() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ trNumber, updates }: { trNumber: string; updates: Partial<StudentForm> }) => {
+      const { data: { session } } = await supabase.auth.getSession();
       const res = await supabase.functions.invoke("manage-students", {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
         body: { action: "update", students: { tr_number: trNumber, updates } },
       });
       if (res.error) throw res.error;
@@ -140,7 +147,11 @@ export default function AdminStudents() {
 
   const deleteMutation = useMutation({
     mutationFn: async ({ trNumber, userId }: { trNumber: string; userId: string }) => {
+      const { data: { session } } = await supabase.auth.getSession();
       const res = await supabase.functions.invoke("manage-students", {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
         body: { action: "delete", students: { tr_number: trNumber, user_id: userId } },
       });
       if (res.error) throw res.error;

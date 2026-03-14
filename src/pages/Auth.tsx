@@ -26,13 +26,14 @@ export default function Auth() {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md text-center">
           <div className="glass-card p-6 space-y-4">
-            <h2 className="text-xl font-display font-bold text-destructive">Access Denied</h2>
+            <h2 className="text-xl font-display font-bold text-foreground">Account Not Found</h2>
             <p className="text-muted-foreground text-sm">
-              Your account ({user.email}) is not registered as a student.
-              <br />Contact your administrator to get registered.
+              The account <strong>{user.email}</strong> is not yet registered in our system.
+              <br /><br />
+              Please contact your administrator to add your university email to the athlete database.
             </p>
             <button onClick={signOut} className="w-full bg-secondary text-foreground font-display font-semibold py-3 rounded-xl border border-border hover:bg-accent transition-colors">
-              Sign Out
+              Sign Out & Try Again
             </button>
           </div>
         </motion.div>

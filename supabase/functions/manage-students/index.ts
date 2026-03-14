@@ -20,45 +20,48 @@ serve(async (req: Request) => {
     // Verify caller is admin
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ error: "Missing Authorization header" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
-    const supabaseClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: { user: caller } } = await supabaseClient.auth.getUser();
-    if (!caller) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user: caller }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    
+    if (authError || !caller) {
+      return new Response(JSON.stringify({ error: "Invalid token or unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     // Check admin role
-    const { data: adminProfile } = await supabaseAdmin
+    const { data: adminProfile, error: profileError } = await supabaseAdmin
       .from("profiles")
       .select("tr_number")
       .eq("user_id", caller.id)
       .maybeSingle();
 
-    if (!adminProfile) {
-       return new Response(JSON.stringify({ error: "Forbidden: profile missing" }), {
+    if (profileError || !adminProfile) {
+       return new Response(JSON.stringify({ error: "Forbidden: profile missing or error", detail: profileError }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { data: roleData } = await supabaseAdmin
+    const { data: roleData, error: roleError } = await supabaseAdmin
       .from("user_roles")
       .select("role")
       .eq("student_tr", adminProfile.tr_number)
       .eq("role", "admin");
-    if (!roleData || roleData.length === 0) {
-      return new Response(JSON.stringify({ error: "Forbidden: admin only" }), {
+
+    if (roleError || !roleData || roleData.length === 0) {
+      return new Response(JSON.stringify({ 
+        error: "Forbidden: admin only", 
+        detail: roleError,
+        tr_number: adminProfile.tr_number
+      }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
