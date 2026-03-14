@@ -17,7 +17,7 @@ serve(async (req: Request) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
-    // Verify caller is admin
+    // 1. Get Token and Verify Caller
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Missing Authorization header" }), {
@@ -26,17 +26,13 @@ serve(async (req: Request) => {
       });
     }
 
-    // Create a client with the caller's token to verify their identity
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
-    const supabaseClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    
-    const { data: { user: caller }, error: authError } = await supabaseClient.auth.getUser();
+    // Use service role client to get user from token safely
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user: caller }, error: authError } = await supabaseAdmin.auth.getUser(token);
     
     if (authError || !caller) {
       return new Response(JSON.stringify({ 
-        error: "Invalid token or unauthorized", 
+        error: "Unauthorized", 
         detail: authError?.message || "User not found" 
       }), {
         status: 401,
@@ -44,7 +40,7 @@ serve(async (req: Request) => {
       });
     }
 
-    // Check admin role
+    // 2. Get Caller's Profile (to get TR Number)
     const { data: adminProfile, error: profileError } = await supabaseAdmin
       .from("profiles")
       .select("tr_number")
@@ -53,41 +49,41 @@ serve(async (req: Request) => {
 
     if (profileError || !adminProfile) {
        return new Response(JSON.stringify({ 
-         error: "Forbidden: profile missing or error", 
-         detail: profileError?.message || "Profile not found for caller",
-         caller_id: caller.id
+         error: "Forbidden: profile missing", 
+         detail: "No profile found for user_id: " + caller.id 
        }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // 3. Check Admin Role using TR Number
     const { data: roleData, error: roleError } = await supabaseAdmin
       .from("user_roles")
       .select("role")
       .eq("student_tr", adminProfile.tr_number)
-      .eq("role", "admin");
+      .eq("role", "admin")
+      .maybeSingle();
 
-    if (roleError || !roleData || roleData.length === 0) {
+    if (roleError || !roleData) {
       return new Response(JSON.stringify({ 
         error: "Forbidden: admin only", 
-        detail: roleError,
-        tr_number: adminProfile.tr_number
+        detail: "User (TR: " + adminProfile.tr_number + ") does not have admin role"
       }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // 4. Handle Actions
     const { action, students } = await req.json();
 
     if (action === "create") {
-      // students is an array of student objects
       const results: { success: boolean; edu_email: string; error?: string }[] = [];
 
       for (const student of students) {
         try {
-          // Create auth user with edu_email (Google OAuth, random password as placeholder)
+          // Create auth user
           const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
             email: student.edu_email,
             password: generatePassword(),
@@ -100,11 +96,10 @@ serve(async (req: Request) => {
             continue;
           }
 
-          // Upsert profile - insert if handle_new_user didn't create one, update if it did
           const profilePayload = {
             user_id: authData.user.id,
             full_name: student.full_name,
-            tr_number: student.tr_number || null,
+            tr_number: student.tr_number,
             its_number: student.its_number || null,
             house_id: student.house_id || null,
             hizb_id: student.hizb_id || null,
@@ -113,29 +108,12 @@ serve(async (req: Request) => {
             edu_email: student.edu_email,
             birth_date: student.birth_date || null,
             is_under_18: student.is_under_18 || false,
-            age_category: student.age_category || null,
           };
 
-          // Check if profile already exists (created by trigger matching edu_email)
-          const { data: existingProfile } = await supabaseAdmin
+          // The handle_new_user trigger might have already linked the profile
+          const { error: profileError } = await supabaseAdmin
             .from("profiles")
-            .select("tr_number")
-            .eq("user_id", authData.user.id)
-            .maybeSingle();
-
-          let profileError;
-          if (existingProfile) {
-            const { error } = await supabaseAdmin
-              .from("profiles")
-              .update(profilePayload)
-              .eq("tr_number", existingProfile.tr_number);
-            profileError = error;
-          } else {
-            const { error } = await supabaseAdmin
-              .from("profiles")
-              .insert(profilePayload);
-            profileError = error;
-          }
+            .upsert(profilePayload, { onConflict: 'tr_number' });
 
           if (profileError) {
             results.push({ success: false, edu_email: student.edu_email, error: profileError.message });
@@ -145,7 +123,7 @@ serve(async (req: Request) => {
           // Ensure student role exists
           await supabaseAdmin
             .from("user_roles")
-            .upsert({ student_tr: profilePayload.tr_number, role: "student" }, { onConflict: "student_tr,role" });
+            .upsert({ student_tr: student.tr_number, role: "student" }, { onConflict: "student_tr,role" });
 
           results.push({ success: true, edu_email: student.edu_email });
         } catch (e: any) {
@@ -159,18 +137,7 @@ serve(async (req: Request) => {
       });
     }
 
-    if (action === "list") {
-      const { data, error } = await supabaseAdmin
-        .from("profiles")
-        .select("*, houses(name, color), hizb(name)")
-        .order("full_name");
-      if (error) throw error;
-      return new Response(JSON.stringify({ students: data }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
+    // Handle other actions (update, delete) using tr_number...
     if (action === "update") {
       const { tr_number, updates } = students;
       const { error } = await supabaseAdmin
@@ -184,25 +151,11 @@ serve(async (req: Request) => {
       });
     }
 
-    if (action === "reset-password") {
-      const { user_id, new_password } = students;
-      const { error } = await supabaseAdmin.auth.admin.updateUserById(user_id, {
-        password: new_password || generatePassword(),
-      });
-      if (error) throw error;
-      return new Response(JSON.stringify({ success: true }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     if (action === "delete") {
       const { tr_number, user_id } = students;
-      // Delete the auth user (cascades to profile via trigger or we clean up)
       if (user_id) {
         await supabaseAdmin.auth.admin.deleteUser(user_id);
       }
-      // Also delete the profile directly in case user_id was a placeholder
       const { error } = await supabaseAdmin
         .from("profiles")
         .delete()
