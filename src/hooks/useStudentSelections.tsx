@@ -9,11 +9,11 @@ interface SelectionRow {
   sport_id: string;
   category: string;
   rank: number;
-  student_tr: string;
+  student_tr: number;
   eligibility: string | null;
   is_final: boolean;
   is_locked: boolean;
-  created_by: string | null;
+  created_by: number | null;
 }
 
 export function useStudentSelections(
@@ -80,7 +80,7 @@ export function useSaveDraft() {
       sportId: string;
       category: string;
       houseId: string;
-      createdBy: string;
+      createdBy: number;
       slots: { rank: number; studentId: string | null }[];
     }) => {
       // Check if selections are locked — prevent overwrite
@@ -114,7 +114,7 @@ export function useSaveDraft() {
           sport_id: sportId,
           category,
           rank: s.rank,
-          student_tr: s.studentId!,
+          student_tr: Number(s.studentId!),
           eligibility: "Eligible",
           created_by: createdBy,
           is_final: false,
