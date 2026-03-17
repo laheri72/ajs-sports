@@ -18,27 +18,13 @@ Deno.serve(async (req) => {
       auth: { persistSession: false }
     });
 
-    // 1. Get Token and Verify Caller
+    // 1. Verify Caller
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Missing Authorization header" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!authHeader) throw new Error("Missing Authorization header");
 
     const token = authHeader.replace("Bearer ", "");
     const { data: { user: caller }, error: authError } = await supabaseAdmin.auth.getUser(token);
-    
-    if (authError || !caller) {
-      return new Response(JSON.stringify({ 
-        error: "Unauthorized", 
-        detail: authError?.message || "User not found" 
-      }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (authError || !caller) throw new Error("Unauthorized");
 
     // 2. Check Admin Role
     const { data: adminProfile } = await supabaseAdmin
@@ -54,12 +40,7 @@ Deno.serve(async (req) => {
       .eq("role", "admin")
       .maybeSingle();
 
-    if (!roleData) {
-      return new Response(JSON.stringify({ error: "Forbidden: admin only" }), {
-        status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!roleData) throw new Error("Forbidden: admin only");
 
     // 3. Handle Actions
     const { action, students } = await req.json();
@@ -69,57 +50,62 @@ Deno.serve(async (req) => {
 
       for (const student of students) {
         try {
-          // A. Clean up existing profile if it's linked to a non-existent or wrong user
-          // This prevents trigger failures
-          const { data: existingProfile } = await supabaseAdmin
-            .from("profiles")
-            .select("user_id, tr_number")
-            .eq("tr_number", student.tr_number)
-            .maybeSingle();
-
-          // B. Check if Auth User exists
-          const { data: { users: existingUsers } } = await supabaseAdmin.auth.admin.listUsers();
-          let authUser = existingUsers.find(u => u.email?.toLowerCase() === student.edu_email.toLowerCase());
-
-          if (!authUser) {
-            // If profile exists with a user_id, but auth user doesn't exist, clear it
-            if (existingProfile?.user_id) {
-              await supabaseAdmin.from("profiles").update({ user_id: null }).eq("tr_number", student.tr_number);
-            }
-
-            const { data: newData, error: createError } = await supabaseAdmin.auth.admin.createUser({
-              email: student.edu_email,
-              password: generatePassword(),
-              email_confirm: true,
-              user_metadata: { full_name: student.full_name, tr_number: student.tr_number },
-            });
-            if (createError) throw createError;
-            authUser = newData.user;
-          }
-
-          // C. Upsert Profile (Manual sync in case trigger missed it)
-          const { error: upsertError } = await supabaseAdmin
+          // A. PRE-CREATE PROFILE AND ROLE
+          // This ensures constraints are met before Auth triggers run
+          const { error: preProfError } = await supabaseAdmin
             .from("profiles")
             .upsert({
-              user_id: authUser.id,
-              full_name: student.full_name,
               tr_number: student.tr_number,
+              full_name: student.full_name,
+              edu_email: student.edu_email,
               its_number: student.its_number || null,
               house_id: student.house_id || null,
               hizb_id: student.hizb_id || null,
               darajah: student.darajah || null,
               class_name: student.class_name || null,
-              edu_email: student.edu_email,
               birth_date: student.birth_date || null,
               is_under_18: student.is_under_18 || false,
             }, { onConflict: 'tr_number' });
 
-          if (upsertError) throw upsertError;
+          if (preProfError) throw new Error(`Profile setup failed: ${preProfError.message}`);
 
-          // D. Ensure Role
+          // Ensure student role exists for this TR
           await supabaseAdmin
             .from("user_roles")
             .upsert({ student_tr: student.tr_number, role: "student" }, { onConflict: "student_tr,role" });
+
+          // B. CREATE AUTH USER
+          // The handle_new_user trigger will attempt to link via email
+          const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+            email: student.edu_email,
+            password: generatePassword(),
+            email_confirm: true,
+            user_metadata: { full_name: student.full_name, tr_number: student.tr_number },
+          });
+
+          if (authError) {
+            // If auth creation fails with "Database error", it's likely a trigger failing.
+            // We'll try one more time by ensuring user_id is null on profile first.
+            if (authError.message.includes("Database error")) {
+               await supabaseAdmin.from("profiles").update({ user_id: null }).eq("tr_number", student.tr_number);
+               const retry = await supabaseAdmin.auth.admin.createUser({
+                  email: student.edu_email,
+                  password: generatePassword(),
+                  email_confirm: true,
+                  user_metadata: { full_name: student.full_name, tr_number: student.tr_number },
+               });
+               if (retry.error) throw retry.error;
+               authData.user = retry.data.user;
+            } else {
+               throw authError;
+            }
+          }
+
+          // C. FINAL LINKING (Manual backup for trigger)
+          await supabaseAdmin
+            .from("profiles")
+            .update({ user_id: authData.user.id })
+            .eq("tr_number", student.tr_number);
 
           results.push({ success: true, edu_email: student.edu_email });
         } catch (e: any) {
@@ -137,7 +123,7 @@ Deno.serve(async (req) => {
       const { tr_number, updates } = students;
       const { error } = await supabaseAdmin.from("profiles").update(updates).eq("tr_number", tr_number);
       if (error) throw error;
-      return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     if (action === "delete") {
@@ -145,7 +131,7 @@ Deno.serve(async (req) => {
       if (user_id) await supabaseAdmin.auth.admin.deleteUser(user_id);
       const { error } = await supabaseAdmin.from("profiles").delete().eq("tr_number", tr_number);
       if (error) throw error;
-      return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     return new Response(JSON.stringify({ error: "Unknown action" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });

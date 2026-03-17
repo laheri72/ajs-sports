@@ -825,22 +825,30 @@ BEGIN
 END;
                                                                                                                                                                                                  |
 | handle_new_user_linking                | 
+   DECLARE
+     v_tr_number BIGINT;
    BEGIN
-     -- Link existing profile
-     UPDATE public.profiles
-     SET user_id = NEW.id,
-         updated_at = NOW()
-     WHERE edu_email = NEW.email;
+     -- 1. Link existing profile
+     SELECT tr_number INTO v_tr_number 
+     FROM public.profiles 
+     WHERE LOWER(TRIM(edu_email)) = LOWER(TRIM(NEW.email));
 
-     -- Add student role ONLY if it doesn't exist
-     INSERT INTO public.user_roles (user_id, role)
-     VALUES (NEW.id, 'student')
-     ON CONFLICT (user_id, role) DO NOTHING;
+     IF v_tr_number IS NOT NULL THEN
+       -- 2. Link profile to auth user
+       UPDATE public.profiles
+       SET user_id = NEW.id,
+           updated_at = NOW()
+       WHERE tr_number = v_tr_number;
+
+       -- 3. Add student role using student_tr column
+       INSERT INTO public.user_roles (student_tr, role)
+       VALUES (v_tr_number, 'student')
+       ON CONFLICT (student_tr, role) DO NOTHING;
+     END IF;
 
      RETURN NEW;
    END;
-                                                                                        |
-| calculate_student_sport_score          | 
+    || calculate_student_sport_score          | 
 DECLARE
   v_comp_score int := 0;
   v_club_score int := 0;
