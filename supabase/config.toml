@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.recalculate-scores]
 verify_jwt = false
+
+[functions.manage-students]
+verify_jwt = false
